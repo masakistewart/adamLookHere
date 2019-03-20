@@ -1,4 +1,4 @@
-const { GraphQLObjectType, GraphQLString, GraphQLList } = require('graphql');
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema } = require('graphql');
 
 const TrackType = new GraphQLObjectType({
     name: "Track",
@@ -9,6 +9,12 @@ const TrackType = new GraphQLObjectType({
     })
 });
 
+const tracksArr = [
+    {id: '1', name:'track1', genres: ['house', 'DnB', 'dubstep']},
+    {id: '2', name:'track2', genres: ['rap', 'progressive', 'alternative']},
+    {id: '3', name:'track3', genres: ['alternative']}
+];
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -17,13 +23,13 @@ const RootQuery = new GraphQLObjectType({
             args: { id: { type: GraphQLString } },
             resolve(parent, args) {
                 // just playing with the concept
-                return {
-                    name: "track_name",
-                    id: '1234',
-                    genres: ['these', 'are', 'genres']
-                }
+                
             }
         }
     }
+});
+
+module.exports = new GraphQLSchema({
+    query: RootQuery
 });
 
