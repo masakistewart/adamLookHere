@@ -1,22 +1,47 @@
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema, GraphQLID } = graphql;
 
+const artistArr = [
+    { id: '1', name: 'noisia' },
+    { id: '2', name: 'chase and status' },
+    { id: '3', name: 'deadmau5' }
+];
+
+
+const tracksArr = [
+    { id: '1', name: 'this could be', artist: 'noisia', artistId: '1' },
+    { id: '2', name: 'no problem', artist: 'chase and status', artistId: '2'},
+    { id: '3', name: 'ghosts n stuff', artist: 'deadmau5', artistId: '3'}
+];
+
+const ArtistType = new GraphQLObjectType({
+    name: 'Artist',
+    fields: () => ({
+        id: {type: GraphQLID},
+        name: {type: GraphQLString}
+    })
+})
+
+const findById = (id, array) => {
+    return array.filter(item => item.id === id)[0];
+}
+
 const TrackType = new GraphQLObjectType({
     name: "Track",
     description: 'the skjbgdksbg',
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        genres: { type: GraphQLList(GraphQLString) },
-        artist: { type: GraphQLString }
+        artist: { type: GraphQLString },
+        artistId:  {type: GraphQLID },
+        artist: {
+            type: ArtistType,
+            resolve(parent, args) {
+                return findById(parent.artistId, artistArr)
+            }
+        }
     })
 });
-
-const tracksArr = [
-    { id: '1', name: 'track1', genres: ['house', 'DnB', 'dubstep'], artist: 'artist1' },
-    { id: '2', name: 'track2', genres: ['rap', 'progressive', 'alternative'], artist: 'artist2' },
-    { id: '3', name: 'track3', genres: ['alternative'], artist: 'artist3' }
-];
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -25,10 +50,16 @@ const RootQuery = new GraphQLObjectType({
             type: TrackType,
             args: { id: { type: GraphQLID } },
             resolve: (_, args) => new Promise(resolve => {
-                const [track] = tracksArr.filter(track => {
-                    return track.id === args.id
-                })
-                resolve(track)
+                const track = findById(args.id, tracksArr);
+                resolve(track);
+            })
+        },
+        artist: {
+            type: ArtistType,
+            args: {id: {type: GraphQLID} },
+            resolve: (_, args) => new Promise(resolve => {
+                const artist = findById(args.id, artistArr);
+                resolve(artist);
             })
         }
     }
