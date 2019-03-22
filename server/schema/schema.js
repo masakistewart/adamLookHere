@@ -47,7 +47,7 @@ const TrackType = new GraphQLObjectType({
         artist: {
             type: ArtistType,
             resolve(parent, args) {
-                return findById(parent.artistId, artistArr)
+                return findById(parent.artistId, artistArr);
             }
         }
     })
