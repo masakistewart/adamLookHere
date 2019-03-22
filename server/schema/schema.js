@@ -11,14 +11,24 @@ const artistArr = [
 const tracksArr = [
     { id: '1', name: 'this could be', artist: 'noisia', artistId: '1' },
     { id: '2', name: 'no problem', artist: 'chase and status', artistId: '2'},
-    { id: '3', name: 'ghosts n stuff', artist: 'deadmau5', artistId: '3'}
+    { id: '3', name: 'ghosts n stuff', artist: 'deadmau5', artistId: '3'},
+    { id: '4', name: 'tommies song', artist: 'noisia', artistId: '1' }
 ];
 
 const ArtistType = new GraphQLObjectType({
     name: 'Artist',
     fields: () => ({
         id: {type: GraphQLID},
-        name: {type: GraphQLString}
+        name: {type: GraphQLString},
+        tracks: {
+            type: GraphQLList(TrackType),
+            resolve(parent) {
+                return tracksArr.filter(track => {
+                    console.log(track, parent)
+                    return track.artistId === parent.id
+                })
+            }
+        }
     })
 })
 
