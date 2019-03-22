@@ -19,37 +19,39 @@ class Spotify {
         this.token = this.fetchToken();
     }
 
-fetchToken() {
-    return new Promise((resolve, reject) => {
-        if (!(process.env.CLIENTID || process.env.CLIENTSECRET)) {
-            reject(new Error('MISSING CLIENT ID AND CLIENT SECRET'))
-        }
+    fetchToken() {
+        return new Promise((resolve, reject) => {
+            if (!(process.env.CLIENTID || process.env.CLIENTSECRET)) {
+                reject(new Error('MISSING CLIENT ID AND CLIENT SECRET'))
+            }
 
-        request(this.fetchTokenConfig, (err, _, body) => {
-            if (err) reject(new Error(error));
-            console.log(body)
-            resolve(body)
-        });
+            request(this.fetchTokenConfig, (err, _, body) => {
+                if (err) reject(new Error(error));
+                // console.log(body)
+                resolve(JSON.parse(body))
+            });
 
-    })
-}
+        })
+    }
 
-async find(str, arr) {
-    const searchConfig = {
-        method: 'GET',
-        url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}`,
-        headers: {
-            Authorization: 'Bearer ' + await this.token
-        }
-    };
-
-    return new Promise((resolve, reject) => {
-        request(searchConfig, (err, _, body) => { if (err) reject(new Error(err)); resolve(body) })
-    })
-}
+    async find(str, arr) {
+        const token = await this.token;
+        console.log(typeof token)
+        //     const searchConfig = {
+        //         method: 'GET',
+        //         url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}`,
+        //         headers: {
+        //             Authorization: 'Bearer ' + await this.token["access_token"]
+        //         }
+        //     };
+        //     console.log(searchConfig)
+        //     return new Promise((resolve, reject) => {
+        //         request(searchConfig, (err, _, body) => { if (err) reject(new Error(err)); resolve(body) })
+        //     })
+    }
 }
 
 const instance = new Spotify();
 instance.find('hello', ['alternative']).then(data => {
-    console.log(data)
+//     // console.log(data)
 })
