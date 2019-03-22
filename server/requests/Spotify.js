@@ -1,4 +1,5 @@
-
+const request = require('request');
+const searchConfig = { method: 'GET', url: `https://api.spotify.com/v1/search?q=${str}&type=${type.join(',')}` }
 const config = {
     method: 'POST',
     url: 'https://accounts.spotify.com/api/token',
@@ -10,23 +11,31 @@ const config = {
     form: { grant_type: 'client_credentials' }
 };
 
-module.exports = class Spotify {
-    constructor(token) {
-
-        token: token || this.fetchToken()
+class Spotify {
+    constructor() {
+        this.token = this.fetchToken();
     }
 
     fetchToken() {
-        if(process.env.CLIENTID || CLIENTSECRET) {
-            return new Error('MISSING CLIENT ID AND CLIENT SECRET')
-        }
-        
+        return new Promise((resolve, reject) => {
+            if (process.env.CLIENTID || process.env.CLIENTSECRET) {
+                reject(new Error('MISSING CLIENT ID AND CLIENT SECRET'))
+            }
+
+            request(config, (error, _, body) => {
+                if (error) reject(new Error(error));
+                resolve(body)
+            });
+
+        })
     }
 
-    request(config, (error, response, body) => {
-    if (error) throw new Error(error);
-    console.log(body);
-});
-
-
+    find(str, type) {
+        return new Promise((resolve, reject) => {
+            request(searchConfig, (err, _, body) => { if (error) reject(new Error(error)); resolve(body)})
+        })
+    }
 }
+
+const instance = new Spotify();
+console.log(instance.token)
