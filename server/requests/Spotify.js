@@ -36,22 +36,21 @@ class Spotify {
 
     async find(str, arr) {
         const token = await this.token;
-        console.log(typeof token)
-        //     const searchConfig = {
-        //         method: 'GET',
-        //         url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}`,
-        //         headers: {
-        //             Authorization: 'Bearer ' + await this.token["access_token"]
-        //         }
-        //     };
-        //     console.log(searchConfig)
-        //     return new Promise((resolve, reject) => {
-        //         request(searchConfig, (err, _, body) => { if (err) reject(new Error(err)); resolve(body) })
-        //     })
+            const searchConfig = {
+                method: 'GET',
+                url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}`,
+                headers: {
+                    Authorization: 'Bearer ' + token["access_token"]
+                }
+            };
+            console.log(searchConfig)
+            return new Promise((resolve, reject) => {
+                request(searchConfig, (err, _, body) => { if (err) reject(new Error(err)); resolve(body) })
+            })
     }
 }
 
 const instance = new Spotify();
-instance.find('hello', ['alternative']).then(data => {
-//     // console.log(data)
+instance.find('hello', ['track']).then(data => {
+    console.log(data)
 })
