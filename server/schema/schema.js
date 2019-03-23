@@ -1,76 +1,58 @@
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema, GraphQLID } = graphql;
-
-const artistArr = [
-    { id: '1', name: 'noisia' },
-    { id: '2', name: 'chase and status' },
-    { id: '3', name: 'deadmau5' }
-];
-
-
-const tracksArr = [
-    { id: '1', name: 'this could be', artist: 'noisia', artistId: '1' },
-    { id: '2', name: 'no problem', artist: 'chase and status', artistId: '2'},
-    { id: '3', name: 'ghosts n stuff', artist: 'deadmau5', artistId: '3'},
-    { id: '4', name: 'tommies song', artist: 'noisia', artistId: '1' }
-];
+const Spotify = require('../requests/Spotify');
+const { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt ,GraphQLList, GraphQLSchema, GraphQLID } = graphql;
 
 const ArtistType = new GraphQLObjectType({
-    name: 'Artist',
+    name: "ArtistType",
+    description: "an artist object",
     fields: () => ({
         id: {type: GraphQLID},
+        href: {type: GraphQLString},
         name: {type: GraphQLString},
-        tracks: {
-            type: GraphQLList(TrackType),
-            resolve(parent) {
-                return tracksArr.filter(track => {
-                    console.log(track, parent)
-                    return track.artistId === parent.id
-                })
-            }
-        }
+        type: {type: GraphQLString},
+        uri: {type: GraphQLString}
     })
 })
 
-const findById = (id, array) => {
-    return array.filter(item => item.id === id)[0];
-}
-
 const TrackType = new GraphQLObjectType({
     name: "Track",
-    description: 'the skjbgdksbg',
+    description: 'A track object',
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        artist: { type: GraphQLString },
-        artistId:  {type: GraphQLID },
-        artist: {
-            type: ArtistType,
-            resolve(parent, args) {
-                return findById(parent.artistId, artistArr);
-            }
-        }
+        artists: { type: GraphQLList(ArtistType) },
+        available_markets: {type: GraphQLList(GraphQLString)},
+        disc_number: {type: GraphQLInt},
+        duration_ms: {type: GraphQLInt},
+        explicit: {type: GraphQLBoolean},
+        // external_ids: {type: GraphQLObjectType},
+        // external_urls: {type: GraphQLObjectType},
+        href: {type: GraphQLString},
+        is_local: {type: GraphQLBoolean},
+        popularity: {type: GraphQLInt},
+        preview_url: {type: GraphQLString},
+        track_number: {type: GraphQLInt},
+        type: {type: GraphQLString},
+        uri: {type: GraphQLString}
     })
 });
+
+const TracksType = new GraphQLObjectType({
+    name: 'Tracks',
+    description: 'An Array of Tracks',
+    fields: () => ({
+        href: {type: GraphQLString},
+        items: { type: GraphQLList(TrackType) }
+    })
+})
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        track: {
-            type: TrackType,
-            args: { id: { type: GraphQLID } },
-            resolve: (_, args) => new Promise(resolve => {
-                const track = findById(args.id, tracksArr);
-                resolve(track);
-            })
-        },
-        artist: {
-            type: ArtistType,
-            args: {id: {type: GraphQLID} },
-            resolve: (_, args) => new Promise(resolve => {
-                const artist = findById(args.id, artistArr);
-                resolve(artist);
-            })
+        tracks: {
+            type: TracksType,
+            args: { searchTerm: { type: GraphQLString }, searchType: { type: GraphQLList(GraphQLString) } },
+            resolve: (_, args) => Spotify.find(args.searchTerm, args.searchType)
         }
     }
 });

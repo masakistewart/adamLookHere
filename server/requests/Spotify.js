@@ -37,7 +37,7 @@ class Spotify {
         const token = await this.token;
             const searchConfig = {
                 method: 'GET',
-                url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}&limit=1`,
+                url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}&limit=2`,
                 headers: {
                     Authorization: 'Bearer ' + token["access_token"]
                 }
@@ -45,7 +45,9 @@ class Spotify {
             return new Promise((resolve, reject) => {
                 request(searchConfig, (err, _, body) => {
                     if (err) reject(new Error(err));
-                    resolve(body);
+                    const jsonData = JSON.parse(body);
+                    console.log(jsonData)
+                    resolve(jsonData.tracks);
                 });
             })
     }
@@ -66,3 +68,5 @@ class Spotify {
 
 //     });
 // })
+
+module.exports = new Spotify();
