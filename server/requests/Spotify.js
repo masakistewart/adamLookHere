@@ -53,20 +53,4 @@ class Spotify {
     }
 }
 
-// const instance = new Spotify();
-// instance.find('hello', ['track'])
-// .then(data => JSON.parse(data))
-// .then(data => {
-//     const payload = new Object();
-//     const track = data.tracks.items[0];
-//     for(let key in track) {
-//         payload[key] = track[key].constructor.toString()
-//     }
-//     console.log(payload)
-//     fs.writeFile('trackResponse.js', JSON.stringify(payload), (err) => {
-//         if(err) throw err;
-
-//     });
-// })
-
 module.exports = new Spotify();

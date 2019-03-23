@@ -25,8 +25,6 @@ const TrackType = new GraphQLObjectType({
         disc_number: {type: GraphQLInt},
         duration_ms: {type: GraphQLInt},
         explicit: {type: GraphQLBoolean},
-        // external_ids: {type: GraphQLObjectType},
-        // external_urls: {type: GraphQLObjectType},
         href: {type: GraphQLString},
         is_local: {type: GraphQLBoolean},
         popularity: {type: GraphQLInt},
