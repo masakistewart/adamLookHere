@@ -2,6 +2,10 @@ import React, { Component } from "react";
 
 export default () => ({
     render() {
-        return(<h1>Header</h1>);
+        return (
+            <nav className="navbar navbar-light bg-light">
+                <a className="navbar-brand" href="#">Navbar</a>
+            </nav>
+        );
     }
 })
