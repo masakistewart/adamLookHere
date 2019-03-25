@@ -26,8 +26,12 @@ class Spotify {
             }
 
             request(this.fetchTokenConfig, (err, _, body) => {
-                if (err) reject(new Error(error));
-                resolve(JSON.parse(body))
+                if (err) reject(new Error(err));
+                try {
+                    resolve(JSON.parse(body))
+                } catch(error) {
+                    console.log(error)
+                }
             });
 
         })
@@ -35,9 +39,10 @@ class Spotify {
 
     async find(str, arr) {
         const token = await this.token;
+        console.log(str)
             const searchConfig = {
                 method: 'GET',
-                url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}&limit=2`,
+                url: `https://api.spotify.com/v1/search?q=${str}&type=${arr.join(',')}&limit=20`,
                 headers: {
                     Authorization: 'Bearer ' + token["access_token"]
                 }
@@ -46,7 +51,6 @@ class Spotify {
                 request(searchConfig, (err, _, body) => {
                     if (err) reject(new Error(err));
                     const jsonData = JSON.parse(body);
-                    console.log(jsonData)
                     resolve(jsonData.tracks);
                 });
             })
